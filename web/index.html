@@ -3,22 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NotCoin Clone</title>
+  <title>Notcoin</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>💰 <span id="coins">0</span></h1>
-    <div class="coin-container">
-      <img src="coin.png" id="coin" alt="Coin">
+    <div class="coin-wrapper">
+      <img src="coin.png" id="coin" class="coin" alt="Coin">
     </div>
+
+    <h1 id="score">0</h1>
+
     <div class="energy-bar">
       <div id="energy-fill"></div>
     </div>
-    <button id="bonus">🎁 Kunlik bonus</button>
+    <p id="energy-text">⚡ 10 / 10</p>
+
+    <div class="buttons">
+      <button id="invite-btn">🤝 Invite</button>
+      <button id="boost-btn">⚡ Boost</button>
+    </div>
+
+    <div class="invite-box">
+      <h3>🎁 Invite Friends!</h3>
+      <p>Get bonus coins for each friend you invite</p>
+      <button class="invite-now">Invite Now</button>
+    </div>
+
+    <footer>
+      Made with ❤️ for Telegram Mini App
+    </footer>
   </div>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
