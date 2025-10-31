@@ -7,9 +7,9 @@ import random
 import time
 from datetime import date
 
-# ===== CONFIG =====
-TOKEN = os.environ.get("BOT_TOKEN")
-WEBAPP_URL = "https://notcoin-production.up.railway.app/"  # ✅ URL to‘g‘ridan-to‘g‘ri string bo‘lishi kerak
+# ==== CONFIG ====
+TOKEN = os.environ.get("BOT_TOKEN")  # Railway Environment Variables’da joylashadi
+WEBAPP_URL = "https://notcoin-production.up.railway.app/"  # o‘zingning Railway link’ing
 
 MAX_ENERGY = 10
 ENERGY_REGEN_SECONDS = 300
@@ -20,7 +20,7 @@ DAILY_BONUS_COINS = 50
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
-# ===== DATABASE =====
+# ==== DATABASE ====
 conn = sqlite3.connect("database.db", check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute("""
@@ -58,19 +58,16 @@ def regen_energy(user):
                        (new_energy, now, user["user_id"]))
         conn.commit()
 
-# ===== TELEGRAM BOT =====
+# ==== TELEGRAM BOT ====
 @bot.message_handler(commands=['start'])
 def start(message):
     uid = message.from_user.id
     ensure_user(uid)
-
     markup = telebot.types.InlineKeyboardMarkup()
-    # ✅ WebAppInfo bilan to‘g‘ri ishlaydi
     markup.add(telebot.types.InlineKeyboardButton("🎮 O‘yin", web_app=telebot.types.WebAppInfo(WEBAPP_URL)))
+    bot.send_message(uid, "Salom! 👋\n\nBoshlash uchun pastdagi tugmani bosing ⤵️", reply_markup=markup)
 
-    bot.send_message(uid, "Salom! Coin yig‘ishni boshlang 💰", reply_markup=markup)
-
-# ===== FLASK API =====
+# ==== FLASK API ====
 @app.route('/')
 def index():
     return send_from_directory('web', 'index.html')
@@ -113,15 +110,13 @@ def daily_bonus():
     conn.commit()
     return jsonify({"bonus": DAILY_BONUS_COINS})
 
-# ===== BOT THREAD =====
+# ==== BOT THREAD ====
 def run_bot():
-    print("🤖 Telegram bot ishlayapti...")
+    print("🤖 Telegram bot ishga tushdi...")
     bot.infinity_polling(skip_pending=True)
 
-# Flask va botni parallel ishlatish
 threading.Thread(target=run_bot, daemon=True).start()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
-    print(f"🌐 Flask server {port}-portda ishlayapti...")
     app.run(host="0.0.0.0", port=port)
