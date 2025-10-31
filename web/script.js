@@ -1,41 +1,17 @@
-let score = 0;
-let energy = 10;
-const coin = document.getElementById("coin");
-const scoreDisplay = document.getElementById("score");
+let coins = 0;
+let energy = 5500;
+
+const coinCount = document.getElementById("coinCount");
+const energyDisplay = document.getElementById("energy");
 const energyFill = document.getElementById("energy-fill");
-const energyText = document.getElementById("energy-text");
+const coin = document.getElementById("coin");
 
 coin.addEventListener("click", () => {
   if (energy > 0) {
+    coins++;
     energy--;
-    score += Math.floor(Math.random() * 5) + 1;
-    scoreDisplay.textContent = score;
-    updateEnergy();
-    coin.style.transform = "scale(0.9)";
-    setTimeout(() => coin.style.transform = "scale(1)", 100);
-  } else {
-    alert("⚡ Energiya tugagan! Kuting...");
+    coinCount.textContent = coins.toLocaleString();
+    energyDisplay.textContent = energy;
+    energyFill.style.width = (energy / 5500) * 100 + "%";
   }
 });
-
-function updateEnergy() {
-  energyFill.style.width = `${(energy / 10) * 100}%`;
-  energyText.textContent = `⚡ ${energy} / 10`;
-}
-
-setInterval(() => {
-  if (energy < 10) {
-    energy++;
-    updateEnergy();
-  }
-}, 5000);
-
-document.getElementById("boost-btn").onclick = () => {
-  energy = 10;
-  updateEnergy();
-  alert("⚡ Energiya to‘ldi!");
-};
-
-document.getElementById("invite-btn").onclick = () => {
-  alert("👥 Do‘stlaringizni taklif qiling va bonus oling!");
-};
