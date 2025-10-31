@@ -1,47 +1,46 @@
-const tg = window.Telegram?.WebApp;
-if (tg) tg.expand();
+const tg = window.Telegram.WebApp;
+tg.expand();
 
-let balance = 0;
-let energy = 100;
+let user = tg.initDataUnsafe?.user;
+let user_id = user?.id;
 
-const balanceEl = document.getElementById("balance");
-const energyEl = document.getElementById("energy");
-const energyText = document.getElementById("energy-text");
+const coin = document.getElementById("coin");
+const coinsText = document.getElementById("coins");
+const energyFill = document.getElementById("energy-fill");
+const bonusBtn = document.getElementById("bonus");
 
-function earn() {
-  if (energy > 0) {
-    balance += 10;
-    energy -= 5;
-    updateUI();
-  } else {
-    alert("⚡ Energiyangiz tugadi! Kuting yoki boost bosing.");
-  }
+function updateEnergy(value) {
+  energyFill.style.width = (value * 10) + "%";
 }
 
-function invite() {
-  alert("🤝 Do‘stlaringizni taklif qiling va bonus oling!");
-}
+coin.addEventListener("click", () => {
+  fetch("/add_coin", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      coinsText.textContent = data.coins;
+      updateEnergy(data.energy);
+      coin.style.transform = "scale(0.9)";
+      setTimeout(() => coin.style.transform = "scale(1)", 100);
+    })
+    .catch(err => console.log(err));
+});
 
-function boost() {
-  energy = Math.min(100, energy + 50);
-  updateUI();
-  alert("⚡ Energiyangiz to‘ldi!");
-}
-
-function leaderboard() {
-  alert("🏆 Reyting tez orada!");
-}
-
-function updateUI() {
-  balanceEl.textContent = balance.toLocaleString();
-  energyEl.style.width = energy + "%";
-  energyText.textContent = energy;
-}
-
-// Energiyani asta-sekin tiklash
-setInterval(() => {
-  if (energy < 100) {
-    energy += 1;
-    updateUI();
-  }
-}, 3000);
+bonusBtn.addEventListener("click", () => {
+  fetch("/daily_bonus", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.bonus) {
+        alert("🎁 Kunlik bonus: +" + data.bonus);
+      } else {
+        alert("⏳ Bugun bonus olingan!");
+      }
+    });
+});
