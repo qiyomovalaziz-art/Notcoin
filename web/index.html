@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notcoin Clone</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>🏆 Notcoin Clone</h2>
+
+    <div class="coin" onclick="earn()">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/Bitcoin_sign.svg" alt="Coin">
+    </div>
+
+    <div class="balance" id="balance">0</div>
+
+    <div class="energy-bar">
+      <div class="energy" id="energy"></div>
+    </div>
+
+    <div class="stats">
+      <div>⚡ <span id="energy-text">100</span> / 100</div>
+      <div>👥 0 Frens</div>
+      <div>🚀 Boosts</div>
+    </div>
+
+    <div class="buttons">
+      <button onclick="invite()">🤝 Invite</button>
+      <button onclick="boost()">⚡ Boost</button>
+      <button onclick="leaderboard()">🏅 Top Players</button>
+    </div>
+
+    <div class="invite-section">
+      <h2>🎉 Invite Friends!</h2>
+      <p>Get bonus coins for each friend you invite.</p>
+      <button class="invite-btn" onclick="invite()">Invite Now</button>
+    </div>
+
+    <footer>Made with ❤️ for Telegram Mini App</footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
