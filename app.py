@@ -9,7 +9,7 @@ from datetime import date
 
 # ====== CONFIG ======
 TOKEN = os.environ.get("BOT_TOKEN")  # Railway Variables’da
-WEBAPP_URL = os.environ.get("WEBAPP_URL")  # misol: https://yourapp.up.railway.app
+WEBAPP_URL = os.environ.get("https://notcoin-production.up.railway.app␣")  # misol: https://yourapp.up.railway.app
 
 MAX_ENERGY = 10
 ENERGY_REGEN_SECONDS = 300
