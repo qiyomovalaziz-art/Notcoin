@@ -1,14 +1,15 @@
 from flask import Flask, request, send_from_directory, jsonify
 import telebot
 import sqlite3
+import threading
 import os
 import random
 import time
 from datetime import date
 
-# ====== CONFIG ======
-TOKEN = os.environ.get("BOT_TOKEN")  # Railway Variables’da BOT_TOKEN sifatida qo‘shasiz
-WEBAPP_URL = os.environ.get("WEBAPP_URL", "https://notcoin-production.up.railway.app")  # Railway domening
+# ===== CONFIG =====
+TOKEN = os.environ.get("BOT_TOKEN")
+WEBAPP_URL = os.environ.get("WEBAPP_URL")  # misol: https://notcoin-production.up.railway.app
 
 MAX_ENERGY = 10
 ENERGY_REGEN_SECONDS = 300
@@ -19,7 +20,7 @@ DAILY_BONUS_COINS = 50
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
-# ====== DATABASE ======
+# ===== DATABASE =====
 conn = sqlite3.connect("database.db", check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute("""
@@ -57,7 +58,7 @@ def regen_energy(user):
                        (new_energy, now, user["user_id"]))
         conn.commit()
 
-# ====== TELEGRAM HANDLERS ======
+# ===== TELEGRAM BOT =====
 @bot.message_handler(commands=['start'])
 def start(message):
     uid = message.from_user.id
@@ -66,7 +67,7 @@ def start(message):
     markup.add(telebot.types.InlineKeyboardButton("🎮 O‘yin", web_app=telebot.types.WebAppInfo(WEBAPP_URL)))
     bot.send_message(uid, "Salom! Coin yig‘ishni boshlang 💰", reply_markup=markup)
 
-# ====== FLASK API ======
+# ===== FLASK API =====
 @app.route('/')
 def index():
     return send_from_directory('web', 'index.html')
@@ -109,19 +110,10 @@ def daily_bonus():
     conn.commit()
     return jsonify({"bonus": DAILY_BONUS_COINS})
 
-# ====== TELEGRAM WEBHOOK ======
-@app.route("/" + TOKEN, methods=['POST'])
-def webhook_update():
-    json_str = request.stream.read().decode("utf-8")
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
-    return "!", 200
+# ===== BOT THREAD =====
+def run_bot():
+    print("🤖 Telegram bot ishlayapti...")
+    bot.infinity_polling(skip_pending=True)
 
-@app.route("/setwebhook")
-def set_webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url=f"{WEBAPP_URL}/{TOKEN}")
-    return "Webhook set successfully!", 200
-
-# ====== RUN APP ======
-
+# Flask va botni parallel ishlatish
+threading.Thread(target=run_bot, daemon=True).start()
