@@ -9,7 +9,7 @@ from datetime import date
 
 # ===== CONFIG =====
 TOKEN = os.environ.get("BOT_TOKEN")
-WEBAPP_URL = os.environ.get("https://notcoin-production.up.railway.app/")  # misol: https://notcoin-production.up.railway.app
+WEBAPP_URL = "https://notcoin-production.up.railway.app/"  # ✅ URL to‘g‘ridan-to‘g‘ri string bo‘lishi kerak
 
 MAX_ENERGY = 10
 ENERGY_REGEN_SECONDS = 300
@@ -63,8 +63,11 @@ def regen_energy(user):
 def start(message):
     uid = message.from_user.id
     ensure_user(uid)
+
     markup = telebot.types.InlineKeyboardMarkup()
+    # ✅ WebAppInfo bilan to‘g‘ri ishlaydi
     markup.add(telebot.types.InlineKeyboardButton("🎮 O‘yin", web_app=telebot.types.WebAppInfo(WEBAPP_URL)))
+
     bot.send_message(uid, "Salom! Coin yig‘ishni boshlang 💰", reply_markup=markup)
 
 # ===== FLASK API =====
@@ -117,3 +120,8 @@ def run_bot():
 
 # Flask va botni parallel ishlatish
 threading.Thread(target=run_bot, daemon=True).start()
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    print(f"🌐 Flask server {port}-portda ishlayapti...")
+    app.run(host="0.0.0.0", port=port)
