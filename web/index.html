@@ -1,38 +1,44 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notcoin</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notcoin Clone</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <div class="coin-wrapper">
-      <img src="coin.png" id="coin" class="coin" alt="Coin">
+    <div class="header">
+      <div class="wallet">
+        <div class="wallet-info">
+          <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" alt="wallet" class="wallet-icon" />
+          <span>Wallet News</span>
+        </div>
+        <div class="rank">💎 Diamond</div>
+      </div>
+      <div class="balance">
+        🪙 <span id="coinCount">0</span>
+      </div>
+      <div class="sub-rank">💎 Diamond</div>
     </div>
 
-    <h1 id="score">0</h1>
-
-    <div class="energy-bar">
-      <div id="energy-fill"></div>
-    </div>
-    <p id="energy-text">⚡ 10 / 10</p>
-
-    <div class="buttons">
-      <button id="invite-btn">🤝 Invite</button>
-      <button id="boost-btn">⚡ Boost</button>
+    <div class="coin-section">
+      <img src="images/coin.png" alt="coin" id="coin" />
     </div>
 
-    <div class="invite-box">
-      <h3>🎁 Invite Friends!</h3>
-      <p>Get bonus coins for each friend you invite</p>
-      <button class="invite-now">Invite Now</button>
+    <div class="energy">
+      ⚡ <span id="energy">5500</span>
+      <div class="energy-bar">
+        <div id="energy-fill"></div>
+      </div>
     </div>
 
-    <footer>
-      Made with ❤️ for Telegram Mini App
-    </footer>
+    <div class="menu">
+      <div class="menu-item">🎁 Frens</div>
+      <div class="menu-item">🪙 Earn</div>
+      <div class="menu-item">🚀 Boosts</div>
+      <div class="menu-item">✨ Trade</div>
+    </div>
   </div>
 
   <script src="script.js"></script>
