@@ -1,46 +1,41 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-let user = tg.initDataUnsafe?.user;
-let user_id = user?.id;
-
+let score = 0;
+let energy = 10;
 const coin = document.getElementById("coin");
-const coinsText = document.getElementById("coins");
+const scoreDisplay = document.getElementById("score");
 const energyFill = document.getElementById("energy-fill");
-const bonusBtn = document.getElementById("bonus");
-
-function updateEnergy(value) {
-  energyFill.style.width = (value * 10) + "%";
-}
+const energyText = document.getElementById("energy-text");
 
 coin.addEventListener("click", () => {
-  fetch("/add_coin", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id }),
-  })
-    .then(res => res.json())
-    .then(data => {
-      coinsText.textContent = data.coins;
-      updateEnergy(data.energy);
-      coin.style.transform = "scale(0.9)";
-      setTimeout(() => coin.style.transform = "scale(1)", 100);
-    })
-    .catch(err => console.log(err));
+  if (energy > 0) {
+    energy--;
+    score += Math.floor(Math.random() * 5) + 1;
+    scoreDisplay.textContent = score;
+    updateEnergy();
+    coin.style.transform = "scale(0.9)";
+    setTimeout(() => coin.style.transform = "scale(1)", 100);
+  } else {
+    alert("⚡ Energiya tugagan! Kuting...");
+  }
 });
 
-bonusBtn.addEventListener("click", () => {
-  fetch("/daily_bonus", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user_id }),
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.bonus) {
-        alert("🎁 Kunlik bonus: +" + data.bonus);
-      } else {
-        alert("⏳ Bugun bonus olingan!");
-      }
-    });
-});
+function updateEnergy() {
+  energyFill.style.width = `${(energy / 10) * 100}%`;
+  energyText.textContent = `⚡ ${energy} / 10`;
+}
+
+setInterval(() => {
+  if (energy < 10) {
+    energy++;
+    updateEnergy();
+  }
+}, 5000);
+
+document.getElementById("boost-btn").onclick = () => {
+  energy = 10;
+  updateEnergy();
+  alert("⚡ Energiya to‘ldi!");
+};
+
+document.getElementById("invite-btn").onclick = () => {
+  alert("👥 Do‘stlaringizni taklif qiling va bonus oling!");
+};
