@@ -1,15 +1,14 @@
 from flask import Flask, request, send_from_directory, jsonify
 import telebot
 import sqlite3
-import threading
 import os
 import random
 import time
 from datetime import date
 
 # ====== CONFIG ======
-TOKEN = os.environ.get("BOT_TOKEN")  # Railway Variables’da
-WEBAPP_URL = os.environ.get("https://notcoin-production.up.railway.app␣")  # misol: https://yourapp.up.railway.app
+TOKEN = os.environ.get("BOT_TOKEN")  # Railway Variables’da BOT_TOKEN sifatida qo‘shasiz
+WEBAPP_URL = os.environ.get("WEBAPP_URL", "https://notcoin-production.up.railway.app")  # Railway domening
 
 MAX_ENERGY = 10
 ENERGY_REGEN_SECONDS = 300
@@ -37,7 +36,8 @@ conn.commit()
 def ensure_user(uid):
     cursor.execute("SELECT user_id FROM users WHERE user_id = ?", (uid,))
     if not cursor.fetchone():
-        cursor.execute("INSERT INTO users (user_id, coins, energy, last_energy_ts) VALUES (?, ?, ?, ?)", (uid, 0, MAX_ENERGY, int(time.time())))
+        cursor.execute("INSERT INTO users (user_id, coins, energy, last_energy_ts) VALUES (?, ?, ?, ?)",
+                       (uid, 0, MAX_ENERGY, int(time.time())))
         conn.commit()
 
 def get_user(uid):
@@ -53,10 +53,11 @@ def regen_energy(user):
     gained = elapsed // ENERGY_REGEN_SECONDS
     if gained > 0:
         new_energy = min(MAX_ENERGY, user["energy"] + gained)
-        cursor.execute("UPDATE users SET energy = ?, last_energy_ts = ? WHERE user_id = ?", (new_energy, now, user["user_id"]))
+        cursor.execute("UPDATE users SET energy = ?, last_energy_ts = ? WHERE user_id = ?",
+                       (new_energy, now, user["user_id"]))
         conn.commit()
 
-# ====== TELEGRAM BOT ======
+# ====== TELEGRAM HANDLERS ======
 @bot.message_handler(commands=['start'])
 def start(message):
     uid = message.from_user.id
@@ -103,14 +104,26 @@ def daily_bonus():
     today = date.today().isoformat()
     if user["last_daily"] == today:
         return jsonify({"error": "already_claimed"}), 403
-    cursor.execute("UPDATE users SET coins = coins + ?, last_daily = ? WHERE user_id = ?", (DAILY_BONUS_COINS, today, uid))
+    cursor.execute("UPDATE users SET coins = coins + ?, last_daily = ? WHERE user_id = ?",
+                   (DAILY_BONUS_COINS, today, uid))
     conn.commit()
     return jsonify({"bonus": DAILY_BONUS_COINS})
 
-def run_bot():
-    bot.infinity_polling()
+# ====== TELEGRAM WEBHOOK ======
+@app.route("/" + TOKEN, methods=['POST'])
+def webhook_update():
+    json_str = request.stream.read().decode("utf-8")
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return "!", 200
 
+@app.route("/setwebhook")
+def set_webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url=f"{WEBAPP_URL}/{TOKEN}")
+    return "Webhook set successfully!", 200
+
+# ====== RUN APP ======
 if __name__ == '__main__':
-    threading.Thread(target=run_bot, daemon=True).start()
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
