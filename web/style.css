@@ -102,3 +102,90 @@ body {
   font-size: 14px;
   cursor: pointer;
 }
+
+body {
+    margin: 0;
+    background: radial-gradient(circle at center, #000 60%, #111 100%);
+    color: white;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.top-card {
+    width: 90%;
+    background: #222;
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wallet span {
+    font-size: 16px;
+}
+
+.rank {
+    color: #00c2ff;
+    font-weight: bold;
+}
+
+.score {
+    margin-top: 40px;
+}
+
+.coin {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 0 40px #f0a500;
+    margin-bottom: 15px;
+}
+
+#coins {
+    font-size: 40px;
+    margin: 5px;
+}
+
+.rank-text {
+    color: #00c2ff;
+    font-size: 18px;
+}
+
+.energy {
+    margin-top: 15px;
+}
+
+.bar {
+    width: 80%;
+    height: 10px;
+    background: #333;
+    border-radius: 10px;
+    margin: 5px auto;
+}
+
+.bar-fill {
+    height: 10px;
+    width: 100%;
+    background: linear-gradient(90deg, #f8b400, #ffcc00);
+    border-radius: 10px;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    background: #111;
+    border-radius: 20px;
+    padding: 15px;
+    margin-top: 40px;
+    font-size: 18px;
+}
