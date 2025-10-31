@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Bosing va coin yig‘ing</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="stats">
+      <span id="coins">🪙 0</span>
+      <span id="energy">⚡ 10/10</span>
+    </div>
+    <div class="circle" id="coin"></div>
+    <button id="click">Bos!</button>
+
+    <div class="menu">
+      <button onclick="profile()">Profil</button>
+      <button onclick="daily()">Kunlik bonus</button>
+      <button onclick="leaderboard()">Reyting</button>
+      <button onclick="ref()">Referal</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
