@@ -6,7 +6,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 API_TOKEN = '8471383666:AAH75KlVq2XPYqRd0JYbLuWB5yRUHM6oyWc'  # <-- BotFather dan token
-ADMIN_ID = 123456789  # <-- Adminning Telegram ID si
+ADMIN_ID = 7973934849  # <-- Adminning Telegram ID si
 
 logging.basicConfig(level=logging.INFO)
 
