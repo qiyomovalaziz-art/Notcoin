@@ -5,7 +5,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 
-API_TOKEN = "8471383666:AAGiVKUlCL5AvHDdVNkhxWGfqVeiJL5wDeM"  # Bot token
+API_TOKEN = "8568223587:AAEHaVPFcfvb-T03vsY4bcaT6jYHuRai66c"  # Bot token
 ADMIN_ID = 7973934849  # Admin Telegram ID
 
 logging.basicConfig(level=logging.INFO)
