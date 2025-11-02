@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 
 API_TOKEN = "8568223587:AAEHaVPFcfvb-T03vsY4bcaT6jYHuRai66c"
-ADMIN_ID = 7973934849  # Admin Telegram ID
+ADMIN_ID = 7823588220  # Admin Telegram ID
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
