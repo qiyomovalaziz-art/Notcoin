@@ -339,8 +339,3 @@ async def admin_send_reply(message: types.Message, state: FSMContext):
 # === ISHGA TUSHIRISH ===
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
-
-
-
-Meng malumot vdyo qoʻygandan soʻnga boshqa vdyo qoʻymaymanda lekin 20 ta vdyo qoʻy deyopti va qoʻysam orqaga qaytmayopti keyin akavunt savdoham shunqa boʻlyapti
-Shuni menga toʻgʻirlab ber 
