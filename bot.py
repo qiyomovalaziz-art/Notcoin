@@ -125,6 +125,17 @@ async def back_to_main_menu(call: types.CallbackQuery):
     await call.message.answer("🏠 Asosiy menyu:", reply_markup=main_menu())
     await call.answer()
 
+# === ADMIN PANELGA QAYTISH ===
+@dp.callback_query_handler(lambda c: c.data == "back_to_admin")
+async def back_to_admin(call: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    try:
+        await bot.delete_message(call.message.chat.id, call.message.message_id)
+    except:
+        pass
+    await call.message.answer("🔙 Admin panel:", reply_markup=admin_panel())
+    await call.answer()
+
 # === UC QO‘SHISH / O‘CHIRISH / KARTA ===
 @dp.callback_query_handler(lambda c: c.data == "set_card")
 async def set_card_start(call: types.CallbackQuery):
@@ -169,7 +180,7 @@ async def delete_uc_start(call: types.CallbackQuery):
     markup = InlineKeyboardMarkup()
     for i, uc in enumerate(data["uc_options"]):
         markup.add(InlineKeyboardButton(f"❌ {uc['label']}", callback_data=f"remove_uc_{i}"))
-    markup.add(InlineKeyboardButton("⬅️ Orqaga", callback_data="back_to_main"))
+    markup.add(InlineKeyboardButton("⬅️ Orqaga", callback_data="back_to_admin"))
     await call.message.answer("O‘chirmoqchi bo‘lgan UC ni tanlang:", reply_markup=markup)
 
 @dp.callback_query_handler(lambda c: c.data.startswith("remove_uc_"))
@@ -224,7 +235,7 @@ async def receive_receipt(message: types.Message, state: FSMContext):
     await message.answer("✅ Buyurtmangiz adminga yuborildi!", reply_markup=main_menu())
     await state.finish()
 
-# === VIDEOLAR (20 TAGACHA) ===
+# === VIDEO TIZIMI (TO‘G‘RILANGAN) ===
 async def show_video_with_next(message, category, index):
     videos = data["malumot_videos"] if category == "malumot" else data["akavideos"]
     markup = InlineKeyboardMarkup()
@@ -233,20 +244,27 @@ async def show_video_with_next(message, category, index):
     markup.add(InlineKeyboardButton("⬅️ Asosiy menyu", callback_data="back_to_main"))
     await message.answer_video(videos[index], caption=f"{category.title()} video {index+1}/{len(videos)}", reply_markup=markup)
 
-# Ma’lumot video yuklash
+# === Ma’lumot video ===
 @dp.callback_query_handler(lambda c: c.data == "set_malumot")
 async def ask_malumot_video(call: types.CallbackQuery):
-    await call.message.answer("🎥 1–20 tagacha ma’lumot videolarini yuboring (birma-bir).")
+    if call.from_user.id not in authorized_admins and call.from_user.id != ADMIN_ID:
+        await call.answer("❌ Faqat admin uchun!", show_alert=True)
+        return
+    markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton("⬅️ Orqaga", callback_data="back_to_admin"))
+    await call.message.answer("🎥 1–20 tagacha ma’lumot videolarini yuboring (birma-bir).", reply_markup=markup)
     await AdminStates.waiting_for_malumot_video.set()
 
 @dp.message_handler(content_types=['video'], state=AdminStates.waiting_for_malumot_video)
-async def save_malumot_video(message: types.Message):
+async def save_malumot_video(message: types.Message, state: FSMContext):
     if len(data["malumot_videos"]) >= 20:
-        await message.answer("⚠️ 20 ta video limiti to‘ldi!")
+        await message.answer("⚠️ 20 ta video limiti to‘ldi!", reply_markup=admin_panel())
+        await state.finish()
         return
     data["malumot_videos"].append(message.video.file_id)
     save_data(data)
     await message.answer(f"🎬 Video qo‘shildi ({len(data['malumot_videos'])}/20).", reply_markup=admin_panel())
+    await state.finish()
 
 @dp.callback_query_handler(lambda c: c.data == "malumot")
 async def show_malumot(call: types.CallbackQuery):
@@ -263,20 +281,27 @@ async def next_malumot_video(call: types.CallbackQuery):
     await show_video_with_next(call.message, "malumot", index)
     await call.answer()
 
-# Akkaunt video yuklash
+# === Akkaunt video ===
 @dp.callback_query_handler(lambda c: c.data == "set_akavideo")
 async def ask_akavideo(call: types.CallbackQuery):
-    await call.message.answer("🎮 1–20 tagacha akkaunt savdo videolarini yuboring (birma-bir).")
+    if call.from_user.id not in authorized_admins and call.from_user.id != ADMIN_ID:
+        await call.answer("❌ Faqat admin uchun!", show_alert=True)
+        return
+    markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton("⬅️ Orqaga", callback_data="back_to_admin"))
+    await call.message.answer("🎮 1–20 tagacha akkaunt savdo videolarini yuboring (birma-bir).", reply_markup=markup)
     await AdminStates.waiting_for_akavideo.set()
 
 @dp.message_handler(content_types=['video'], state=AdminStates.waiting_for_akavideo)
-async def save_akavideo(message: types.Message):
+async def save_akavideo(message: types.Message, state: FSMContext):
     if len(data["akavideos"]) >= 20:
-        await message.answer("⚠️ 20 ta video limiti to‘ldi!")
+        await message.answer("⚠️ 20 ta video limiti to‘ldi!", reply_markup=admin_panel())
+        await state.finish()
         return
     data["akavideos"].append(message.video.file_id)
     save_data(data)
     await message.answer(f"🎮 Video qo‘shildi ({len(data['akavideos'])}/20).", reply_markup=admin_panel())
+    await state.finish()
 
 @dp.callback_query_handler(lambda c: c.data == "akavideo")
 async def show_akavideo(call: types.CallbackQuery):
@@ -293,7 +318,7 @@ async def next_akavideo_video(call: types.CallbackQuery):
     await show_video_with_next(call.message, "akavideo", index)
     await call.answer()
 
-# === ADminga xabar yozish va javob ===
+# === ADminga xabar yozish ===
 @dp.callback_query_handler(lambda c: c.data == "admin_xabar")
 async def ask_user_message(call: types.CallbackQuery):
     await call.message.answer("💬 Xabaringizni yozing, u adminga yuboriladi.")
@@ -326,16 +351,4 @@ async def admin_reply(call: types.CallbackQuery, state: FSMContext):
 @dp.message_handler(state=UserMessageStates.waiting_for_admin_reply, content_types=['text', 'photo', 'video'])
 async def admin_send_reply(message: types.Message, state: FSMContext):
     data_state = await state.get_data()
-    user_id = data_state["reply_user_id"]
-    if message.text:
-        await bot.send_message(user_id, f"💬 Admin javobi:\n{message.text}")
-    elif message.photo:
-        await bot.send_photo(user_id, message.photo[-1].file_id, caption="📷 Admin javobi")
-    elif message.video:
-        await bot.send_video(user_id, message.video.file_id, caption="🎥 Admin javobi")
-    await message.answer("✅ Javob yuborildi!", reply_markup=admin_panel())
-    await state.finish()
-
-# === ISHGA TUSHIRISH ===
-if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    user
